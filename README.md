@@ -8,6 +8,10 @@
 ## Soal dan Pembahasan
 ### A
 Soal : Tugas pertama kalian yaitu membuat topologi jaringan sesuai dengan rancangan yang diberikan Luffy dibawah ini
+- Jipangu adalah DHCP Server
+- Foosha, Water7, dan Guanhao adalah DHCP Relay
+- Doriki adalah DNS Server
+- Blueno, Cipher, Elena, dan Fukurou adalah client
 
 ![topologi gns](https://user-images.githubusercontent.com/75319371/145600493-3996ee27-3768-4dce-bb31-0f34e367afa8.JPG)
 
@@ -15,7 +19,12 @@ Soal : Tugas pertama kalian yaitu membuat topologi jaringan sesuai dengan rancan
 Soal : Karena kalian telah belajar subnetting dan routing, Luffy ingin meminta kalian untuk membuat topologi tersebut menggunakan teknik CIDR atau VLSM.
 
 ### Pembagian Subnet
+Pembagian subnet menggunakan VLSM. Berdasarkan topologi yang telah dibuat, dapat ditentukan labelling netmask sebagai berikut
+
 ![vlsm fix-topologi](https://user-images.githubusercontent.com/75319371/145598429-7fb93ad5-c8d5-440d-9361-369d0641605f.jpg)
+
+Berikut ini adalah jumlah ip untuk masing-masing subnet yang telah ditentukan. Berdasarkan total jumlah IP untuk A1 hingga A8 pada tabel berikut, didapatkan netmask /21 sebagai netmask terbesar yang akan digunakan untuk pembagian IP.
+
 | Subnet | Jumlah IP | Netmask |	
 |:------:|:---------:|:-------:|	
 |   A1   |    3   |   /29   |	
@@ -28,7 +37,12 @@ Soal : Karena kalian telah belajar subnetting dan routing, Luffy ingin meminta k
 |   A8   |    3    |   /29  |	
 |  Total   |    1314    |   /21  |
 ### Pembagian IP
+
+Berikut adalah pembagian IP yang diilustrasikan menggunakan tree. Pada tree berikut dapat diketahui network ID yang dapat digunakan untuk masing-masing subnet.
+
 ![vlsm fix-tree](https://user-images.githubusercontent.com/75319371/145599817-c2b24ace-6b77-4cdb-8155-317e91344737.jpg)
+
+Berikut adalah tabel pembagian IP untuk subnet A1 hingga A8 yang terdiri dari Network ID, Netmask, dan Broadcast Address. Tabel ini dibuat untuk memudahkan pemberian IP pada GNS3.
 
 |  A1 | Network ID        | 10.19.0.8     |	
 |:---:|-------------------|-----------------|	
@@ -56,7 +70,7 @@ Soal : Karena kalian telah belajar subnetting dan routing, Luffy ingin meminta k
 |     | Netmask           | 255.255.255.248  |	
 |     | Broadcast Address | 10.19.0.23    |
 ### C
-Soal : Setelah melakukan subnetting, kalian juga diharuskan melakukan Routing agar setiap perangkat pada jaringan tersebut dapat terhubung
+Soal : Setelah melakukan subnetting, kalian juga diharuskan melakukan Routing agar setiap perangkat pada jaringan tersebut dapat terhubung. 
 
 - Foosha
 ```
