@@ -72,6 +72,26 @@ Berikut adalah tabel pembagian IP untuk subnet A1 hingga A8 yang terdiri dari Ne
 ### C
 Soal : Setelah melakukan subnetting, kalian juga diharuskan melakukan Routing agar setiap perangkat pada jaringan tersebut dapat terhubung. 
 
+Sebelum melakukan routing, membuat konfigurasi untuk masing-masing node pada `Configure > Edit Network Configuration`. Konfigurasi ini dilakukan supaya kita dapat mengetahui IP address dan gateway masing-masing node sehingga dapat saling dihubungkan saat membuat routing. Berikut adalah salah satu konfigurasi yang dilakukan, yaitu pada router Foosha
+```
+auto eth0
+iface eth0 inet static
+address 192.168.122.2
+netmask 255.255.255.252
+gateway 192.168.122.1
+
+auto eth1
+iface eth1 inet static
+	address 10.19.0.5
+	netmask 255.255.255.252
+
+auto eth2
+iface eth2 inet static
+	address 10.19.0.1
+	netmask 255.255.255.252
+```
+
+Kemudian, Routing dilakukan antar router pada Foosha, Water7, dan Guanhao
 - Foosha
 ```
 route add -net 10.19.0.8 netmask 255.255.255.248 gw 10.19.0.2
@@ -90,7 +110,55 @@ route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.19.0.1
 route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.19.0.5
 ```
 ### D
-Soal : Tugas berikutnya adalah memberikan ip pada subnet Blueno, Cipher, Fukurou, dan Elena secara dinamis menggunakan bantuan DHCP server. Kemudian kalian ingat bahwa kalian harus setting DHCP Relay pada router yang menghubungkannya.
+Soal : Tugas berikutnya adalah memberikan IP pada subnet Blueno, Cipher, Fukurou, dan Elena secara dinamis menggunakan bantuan DHCP server. Kemudian kalian ingat bahwa kalian harus setting DHCP Relay pada router yang menghubungkannya.
+
+DHCP Server diletakkan pada Jipangu dengan file konfigurasi  `/etc/dhcp/dhcpd.conf`sebagai berikut. Konfigurasi ini digunakan untuk memberikan IP address untuk masing-masing client. 
+```
+subnet 10.19.0.128 netmask 255.255.255.128 {
+    range 10.19.0.130 10.19.0.255;
+    option routers 10.19.0.129;
+    option broadcast-address 10.19.0.255;
+    option domain-name-servers 10.19.0.10;
+    default-lease-time 360;
+    max-lease-time 7200;
+}
+
+subnet 10.19.0.8 netmask 255.255.255.248 {
+}
+
+subnet 10.19.4.0 netmask 255.255.252.0 {
+    range 10.19.4.2 10.19.7.255;
+    option routers 10.19.4.1;
+    option broadcast-address 10.19.7.255;
+    option domain-name-servers 10.19.0.10;
+    default-lease-time 360;
+    max-lease-time 7200;
+}
+subnet 10.19.2.0 netmask 255.255.254.0 {
+    range 10.19.2.2 10.19.3.255;
+    option routers 10.19.2.1;
+    option broadcast-address 10.19.3.255;
+    option domain-name-servers 10.19.0.10;
+    default-lease-time 360;
+    max-lease-time 7200;
+}
+subnet 10.19.1.0 netmask 255.255.255.0 {
+    range 10.19.1.2 10.19.1.255;
+    option routers 10.19.1.1;
+    option broadcast-address 10.19.1.255;
+    option domain-name-servers 10.19.0.10;
+    default-lease-time 360;
+    max-lease-time 7200;
+}
+```
+
+Supaya client dapat terhubung dengan internet, pada file konfigurasi `/etc/dhcp/dhcpd.conf` diarahkan menuju `eth0` yaitu interface yang mengarah ke router. Kemudian, menambahkan file konfigurasi `/etc/default/isc-dhcp-relay` untuk DHCP Relay pada router Water7, Foosha, dan Guanhao sebagai berikut
+```
+SERVERS="10.19.0.11"
+INTERFACES="eth0 eth1 eth2 eth3"
+OPTIONS=""
+```
+IP `10.19.0.11` adalah IP Address dari DHCP Server yaitu Jipangu, lalu mengarahkan interface pada `eth0 eth1 eth2 eth3` supaya DHCP Relay dapat meneruskan DHCP request pada DHCP Server
 
 ### No 1
 ### No 2
