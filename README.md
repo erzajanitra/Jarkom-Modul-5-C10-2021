@@ -231,12 +231,6 @@ Untuk mengetesnya akan dilakukan di client Elena dengan menggunakan netcat. Jang
 ```
 apt-get update
 apt-get install netcat -y
-route add -net 10.19.0.8 netmask 255.255.255.248 gw 10.19.0.2
-route add -net 10.19.0.128 netmask 255.255.255.128 gw 10.19.0.2
-route add -net 10.19.4.0 netmask 255.255.252.0 gw 10.19.0.2
-route add -net 10.19.0.16 netmask 255.255.255.248 gw 10.19.0.6
-route add -net 10.19.2.0 netmask 255.255.254.0 gw 10.19.0.6
-route add -net 10.19.1.0 netmask 255.255.255.0 gw 10.19.0.6
 ```
 
 Setelah itu, ketik ini dalam terminal di Jorge dan Maingate:
@@ -244,7 +238,6 @@ Setelah itu, ketik ini dalam terminal di Jorge dan Maingate:
 - Water7
 ```
 nc -l -p 80
-route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.19.0.1
 ```
 
 Ketik ini dalam terminal di Elena:
@@ -252,7 +245,6 @@ Ketik ini dalam terminal di Elena:
 - Guanhao
 ```
 nc 10.19.0.8 80
-route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.19.0.5
 ```
 
 Lalu ketikkan apapun dalam terminal tersebut, maka hal yang diketikkan akan muncul di salah satu server Jorge atau Maingate:
