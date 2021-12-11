@@ -163,8 +163,82 @@ OPTIONS=""
 IP `10.19.0.11` adalah IP Address dari DHCP Server yaitu Jipangu, lalu mengarahkan interface pada `eth0 eth1 eth2 eth3` supaya DHCP Relay dapat meneruskan DHCP request pada DHCP Server
 
 ### No 1
+Soal :   
+Agar topologi yang kalian buat dapat mengakses keluar, kalian diminta untuk mengkonfigurasi Foosha menggunakan iptables, tetapi Luffy tidak ingin menggunakan MASQUERADE.
+
+Jawab :  
+Pertama, lakukan konfigurasi pada interface Foosha seperti ini
+
+![1a](images/1a.png)
+
+NAT dan Foosha tersambung pada eth0, karena kita tidak menggunakan masquerade, maka kita perlu mengubah ip yang didapat dari NAT menjadi static. Address dari eth0 menyesuaikan address yang didapat dari NAT, sedangkan gateway merupakan address NAT.
+
+Setelah itu, masukkan command berikut pada Foosha
+
+```
+iptables -t nat -A POSTROUTING -o eth0 -j SNAT -s 10.19.0.0/21 --to-source 192.168.122.2
+```
+
+Keterangan:  
+-t nat: Menggunakan tabel NAT karena akan mengubah alamat asal dari paket
+
+-A POSTROUTING: Menggunakan chain POSTROUTING karena mengubah asal paket setelah routing
+
+-s 10.19.0.0/21: Mendifinisikan alamat asal dari paket yaitu semua alamat IP dari subnet 10.19.0.0/21
+
+-o eth0: Paket keluar dari eth0 Foosha
+
+-j SNAT: Menggunakan target SNAT untuk mengubah source atau alamat asal dari paket
+
+--to-s 192.168.122.2: Mendefinisikan IP source, di mana digunakan eth0 Foosha
+
+Setelah itu, Foosha dan yang lain telah tersambung ke internet
+
 ### No 2
+Soal :   
+Kalian diminta untuk mendrop semua akses HTTP dari luar Topologi kalian pada server yang merupakan DHCP Server dan DNS Server demi menjaga keamanan.
+
+Jawab :  
+Pada Jipanu dan Doriki : 
+```
+iptables -A INPUT -p tcp --dport 80 -j REJECT
+```
+
+Keterangan:
+
+-A INPUT: Menggunakan chain INPUT
+
+-p tcp: Mendefinisikan protokol yang digunakan, yaitu tcp
+
+--dport 80: Mendefinisikan port yang digunakan, yaitu 80 (HTTP)
+
+-j DROP: Paket di-drop
+
 ### No 3
+Soal :   
+Karena kelompok kalian maksimal terdiri dari 3 orang. Luffy meminta kalian untuk membatasi DHCP dan DNS Server hanya boleh menerima maksimal 3 koneksi ICMP secara bersamaan menggunakan iptables, selebihnya didrop.
+
+Jawab :   
+```
+iptables -A INPUT -p icmp -m connlimit --connlimit-above 3 --connlimit-mask 0 -j DROP
+ ```
+
+Keterangan:
+
+-A INPUT: Menggunakan chain INPUT
+
+-p icmp: Mendefinisikan protokol yang digunakan, yaitu ICMP (ping)
+
+-m connlimit: Menggunakan rule connection limit
+
+--connlimit-above 3: Limit yang ditangkap paket adalah di atas 3
+
+--connlimit-mask 0 : Hanya memperbolehkan 3 koneksi setiap subnet dalam satu waktu
+
+-j DROP: Paket di-drop
+
+Untuk testing, bisa dilakukan ping dari 4 client yang berbeda secara bersamaan.
+
 ### No 4
 Soal : 
 Kemudian kalian diminta untuk membatasi akses ke Doriki yang berasal dari subnet Blueno, Cipher, Elena dan Fukuro dengan beraturan sebagai berikut
